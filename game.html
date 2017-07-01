@@ -1,0 +1,113 @@
+<html>
+My First Game in  JavaScript<br>
+
+
+<canvas id="gameCanvas" width="800" height="600">
+	
+</canvas>
+<script type="text/javascript">
+	var canvas;
+	var canvasContext;
+	var ballx=50;
+	var ballSpeedX=10;
+	var bally=50;
+	var ballSpeedy=4;
+	var paddle1Y=250;
+	var paddle2Y=250;
+	const PADDLE_HEIGHT=100;
+	const PADDLE_THICKNESS=10;
+
+	function calculateMousePos(evt) {
+		var rect=canvas.getBoundingClientRect();
+		var root=document.documentElement;
+		var mousex=evt.clientX - rect.left-root.scrollLeft;
+		var mouseY=evt.clientY-rect.top-root.scrollTop;
+		return{
+			x:mousex,
+			y:mouseY
+		}
+	}
+	window.onload =function(){
+		
+		canvas=document.getElementById('gameCanvas');
+		canvasContext=canvas.getContext('2d');
+		var frameRatepeesec=30;
+		setInterval(function(){
+			moveEverything();
+			drawEverything();
+
+		},1000/frameRatepeesec);
+		canvas.addEventListener('mousemove',function(evt){
+			var mousePos=calculateMousePos(evt);
+			paddle1Y=mousePos.y-(PADDLE_HEIGHT/2);
+		});
+
+	}
+	function ballReset()
+	{	
+		ballSpeedX=-ballSpeedX;
+		ballx=canvas.width/2;
+		bally=canvas.height/2;
+	}
+	
+	function moveEverything(){
+			ballx=ballx+ballSpeedX;
+			bally=bally+ballSpeedy;
+			if(ballx<0){
+				//if hits left then change direcction
+				//ballSpeedX=-ballSpeedX;
+
+				//code for left wall
+				if(bally>paddle1Y && bally<paddle1Y+PADDLE_HEIGHT){
+						ballSpeedX=-ballSpeedX;
+				}else{
+				ballReset();
+				}
+			}
+			if(ballx>canvas.width){
+				//code for right wall
+
+				if(bally>paddle2Y && bally<paddle2Y+PADDLE_HEIGHT){
+						ballSpeedX=-ballSpeedX;
+				}else{
+				ballReset();
+				}
+							}
+
+			if(bally>canvas.height){
+				ballSpeedy=-ballSpeedy;
+			}
+			if(bally < 0){
+				ballSpeedy=-ballSpeedy;
+			}
+
+	}
+function drawEverything(){
+		//Creation of Black Screen
+		colorRect(0,0,canvas.width,canvas.height,'black');
+		//LEft Player paddle
+		colorRect(0,paddle1Y,PADDLE_THICKNESS,PADDLE_HEIGHT,'white');
+		//Right Player paddle
+		colorRect(canvas.width-PADDLE_THICKNESS,paddle2Y,PADDLE_THICKNESS,PADDLE_HEIGHT,'white');
+
+		//Creation of the ball
+		colorCircle(ballx,bally,10,'white')
+		//colorRect(ballx,200,10,10,'red');
+
+}
+function colorCircle(centerX,centerY,radius,drawColor){
+	canvasContext.fillStyle=drawColor;
+		canvasContext.beginPath();
+		canvasContext.arc(centerX,centerY,radius,0,Math.PI*2,true);
+		canvasContext.fill();
+		
+}
+function colorRect(leftx,topy,width,height,drawColor){
+	canvasContext.fillStyle=drawColor;
+		canvasContext.fillRect(leftx,topy,width,height);
+
+}
+</script>
+
+
+</html>
